@@ -8,12 +8,17 @@ import json
 
 @dataclass
 class Armor:
-    pass
+    name: str
+    defence: int
+    stamina_per_turn: int  # выносливость за ход
 
 
 @dataclass
 class Weapon:
-    pass
+    name: str
+    min_damage: float
+    max_damage: float
+    stamina_per_hit: int  # выносливость за удар
 
     @property
     def damage(self):
