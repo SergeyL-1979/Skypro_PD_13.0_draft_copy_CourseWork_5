@@ -47,22 +47,36 @@ class Skill(ABC):
 
 
 class FuryPunch(Skill):
+    """
+    Логика использования skill_effect -> return str
+    В классе нам доступны экземпляры user и target - можно использовать любые их методы
+    именно здесь происходит уменьшение stamina(выносливость) у игрока применяющего умение и
+    уменьшение здоровья цели.
+    Результат применения возвращаем строкой
+    """
     name = None
     stamina = None
     damage = None
 
-    def skill_effect(self):
-        # TODO логика использования скилла -> return str
-        # TODO в классе нам доступны экземпляры user и target - можно использовать любые их методы
-        # TODO именно здесь происходит уменшение стамины у игрока применяющего умение и
-        # TODO уменьшение здоровья цели.
-        # TODO результат применения возвращаем строкой
-        pass
+    def skill_effect(self) -> str:
+        self.user.stamina -= self.stamina
+        self.target.get_damage(self.damage)
+        return f"{self.user.name} использует {self.name} и наносит {self.damage} урона сопернику."
+
 
 class HardShot(Skill):
+    """
+    Логика использования skill_effect -> return str
+    В классе нам доступны экземпляры user и target - можно использовать любые их методы
+    именно здесь происходит уменьшение stamina(выносливость) у игрока применяющего умение и
+    уменьшение здоровья цели.
+    Результат применения возвращаем строкой
+    """
     name = None
     stamina = None
     damage = None
 
-    def skill_effect(self):
-        pass
+    def skill_effect(self) -> str:
+        self.user.stamina -= self.stamina
+        self.target.get_damage(self.damage)
+        return f"{self.user.name} использует {self.name} и наносит {self.damage} урона сопернику."
