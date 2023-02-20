@@ -7,14 +7,20 @@ from typing import Optional
 
 
 class BaseUnit(ABC):
+    """
+    Базовый класс юнита
+    """
     def __init__(self, name: str, unit_class: UnitClass):
+        """
+        При инициализации класса Unit используем свойства класса UnitClass
+        """
         self.name = name
         self.unit_class = unit_class
         self.hp = unit_class.max_health
         self.stamina = unit_class.max_stamina # выносливость
         self.weapon = None
         self.armor = None
-        self._is_skill_used = None
+        self._is_skill_used = False
 
     @property
     def health_points(self):
@@ -45,9 +51,8 @@ class BaseUnit(ABC):
         return damage
 
     def get_damage(self, damage: int) -> Optional[int]:
-        # TODO получение урона целью
-        #      присваиваем новое значение для аттрибута self.health
-        pass
+        # TODO получение урона целью присваиваем новое значение для аттрибута self.hp
+        return self.hp
 
     @abstractmethod
     def hit(self, target: BaseUnit) -> str:
