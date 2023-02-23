@@ -81,7 +81,3 @@ class Equipment:
 # print(d.equipment['armors'])
 # print(d.equipment.weapons[0])
 # print(d.equipment.armors[0])
-
-# s = EquipmentData(Armor, Weapon)
-# print(s.armors)
-# print(s.weapons)
