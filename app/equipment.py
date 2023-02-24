@@ -24,7 +24,8 @@ class Weapon:
 
     @property
     def damage(self) -> float:
-        return uniform(self.min_damage, self.max_damage)
+        damage_float = uniform(self.min_damage, self.max_damage)
+        return "%.2f" % damage_float
 
 
 @dataclass
@@ -55,11 +56,12 @@ class Equipment:
 
     def get_weapons_names(self) -> list:
         # возвращаем список с оружием
-        return [item.name for item in self.equipment[0]]
+        # return [item.name for item in self.weapon]
+        return [item.name for item in self.equipment.weapons]
 
     def get_armors_names(self) -> list:
         # возвращаем список с броней
-        return [item.name for item in self.armor]
+        return [item.name for item in self.equipment.armors]
 
     @staticmethod
     def _get_equipment_data() -> EquipmentData:
@@ -77,7 +79,12 @@ class Equipment:
 
 
 # d = Equipment()
+# print(d.get_weapons_names())
+# print(d.get_armors_names())
 # print(d.equipment['weapons'])
 # print(d.equipment['armors'])
 # print(d.equipment.weapons[0])
 # print(d.equipment.armors[0])
+
+# w = Weapon(id=1, name='Knife', max_damage=5, min_damage=1, stamina_per_hit=2)
+# print(w.damage)
