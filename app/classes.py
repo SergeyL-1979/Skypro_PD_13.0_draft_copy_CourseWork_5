@@ -13,7 +13,7 @@ class UnitClass:
     skill: Skill
 
 
-WarriorClass =  UnitClass(
+WarriorClass = UnitClass(
     name="Воин",
     max_health=100,
     max_stamina=20,
@@ -21,7 +21,7 @@ WarriorClass =  UnitClass(
     stamina=0.9,
     armor=2,
     skill=FuryPunch()
-) # Инициализируем экземпляр класса UnitClass и присваиваем ему необходимые значения аттрибутов
+)  # Инициализируем экземпляр класса UnitClass и присваиваем ему необходимые значения аттрибутов
 
 ThiefClass = UnitClass(
     name="Вор",
@@ -31,9 +31,12 @@ ThiefClass = UnitClass(
     stamina=0.9,
     armor=0.7,
     skill=HardShot()
-) # действуем так же как и с воином
+)  # действуем так же как и с воином
 
 unit_classes = {
     ThiefClass.name: ThiefClass,
     WarriorClass.name: WarriorClass
 }
+# print(unit_classes.items())
+# u = unit_classes.get('Воин')
+# print(u.skill.name)
