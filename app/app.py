@@ -1,6 +1,9 @@
-from flask import Flask
+from flask import Flask, render_template, redirect, request
 
-from base import BaseUnit
+from base import PlayerUnit, EnemyUnit, BaseUnit, Arena
+from classes import unit_classes
+from equipment import Weapon, Armor, Equipment
+
 
 app = Flask(__name__)
 
@@ -9,13 +12,13 @@ heroes = {
     "enemy": BaseUnit
 }
 
-arena =  ... # TODO инициализируем класс арены
+arena = Arena()  # инициализируем класс арены
 
 
 @app.route("/")
 def menu_page():
-    # TODO рендерим главное меню (шаблон index.html)
-    pass
+    # рендерим главное меню (шаблон index.html)
+    return render_template('index.html')
 
 
 @app.route("/fight/")
@@ -59,7 +62,17 @@ def choose_hero():
     # TODO кнопка выбор героя. 2 метода GET и POST
     # TODO на GET отрисовываем форму.
     # TODO на POST отправляем форму и делаем редирект на эндпоинт choose enemy
-    pass
+
+    # weapon = Equipment()
+    # result = weapon.equipment
+    # return render_template('hero_choosing.html', result=result)
+    header = 'Выбор героя'
+    equipment = Equipment()
+    weapons = equipment.get_weapons_names()
+    armors = equipment.get_armors_names()
+    classes = unit_classes
+    return render_template('hero_choosing.html',
+                           result={'header': header, "weapons": weapons, "armors": armors, "classes": classes})
 
 
 @app.route("/choose-enemy/", methods=['post', 'get'])
@@ -71,4 +84,4 @@ def choose_enemy():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True, port=10000)
