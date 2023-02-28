@@ -2,8 +2,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
+
 if TYPE_CHECKING:
     from unit import BaseUnit
+
 
 class Skill(ABC):
     """
@@ -54,9 +56,9 @@ class FuryPunch(Skill):
     уменьшение здоровья цели.
     Результат применения возвращаем строкой
     """
-    name = None
-    stamina = None
-    damage = None
+    name = 'Яростный удар'
+    stamina = 6
+    damage = 12
 
     def skill_effect(self) -> str:
         self.user.stamina -= self.stamina
@@ -72,9 +74,9 @@ class HardShot(Skill):
     уменьшение здоровья цели.
     Результат применения возвращаем строкой
     """
-    name = None
-    stamina = None
-    damage = None
+    name = 'Жесткий выстрел'
+    stamina = 5
+    damage = 15
 
     def skill_effect(self) -> str:
         self.user.stamina -= self.stamina
