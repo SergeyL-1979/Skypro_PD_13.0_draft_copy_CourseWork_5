@@ -25,7 +25,7 @@ class Weapon:
     @property
     def damage(self) -> float:
         damage_float = uniform(self.min_damage, self.max_damage)
-        return "%.2f" % damage_float
+        return round(damage_float)
 
 
 @dataclass
@@ -41,22 +41,20 @@ class Equipment:
 
     def get_weapon(self, weapon_name) -> Weapon:
         # возвращает объект оружия по имени
-        for weapon in self.get_weapons_names():
+        for weapon in self.equipment.weapons:
             if weapon.name == weapon_name:
-            # if weapon_name == self.equipment['name']:
                 return weapon
         raise NotImplementedError
 
     def get_armor(self, armor_name) -> Armor:
         # возвращает объект брони по имени
-        for armor in self.get_armors_names():
+        for armor in self.equipment.armors:
             if armor.name == armor_name:
                 return armor
         raise NotImplementedError
 
     def get_weapons_names(self) -> list:
         # возвращаем список с оружием
-        # return [item.name for item in self.weapon]
         return [item.name for item in self.equipment.weapons]
 
     def get_armors_names(self) -> list:
@@ -68,11 +66,9 @@ class Equipment:
         # этот метод загружает json в переменную EquipmentData
         equipment_file = open("../data/equipment.json", encoding="utf-8")
         data = json.load(equipment_file)
-        # print(data['weapons'][0]['name'])
         equipment_schema = marshmallow_dataclass.class_schema(EquipmentData)
-        # print(equipment_schema().dump(data)['weapons'])
+
         try:
-            # return equipment_schema().dump(data)
             return equipment_schema().load(data)
         except marshmallow.exceptions.ValidationError:
             raise ValueError

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, request
 
-from base import PlayerUnit, EnemyUnit, BaseUnit, Arena
+from base import BaseUnit, Arena
 from classes import unit_classes
 from equipment import Weapon, Armor, Equipment
 
@@ -62,17 +62,23 @@ def choose_hero():
     # TODO кнопка выбор героя. 2 метода GET и POST
     # TODO на GET отрисовываем форму.
     # TODO на POST отправляем форму и делаем редирект на эндпоинт choose enemy
+    heroes_name = request.form.get('name')
+    weapon = request.form.get("weapon")
+    armor = request.form.get("armor")
+    unit_class = request.form.get("unit_class")
+    ar = arena.player(heroes_name, weapon, armor, unit_class)
+    print(ar)
 
-    # weapon = Equipment()
-    # result = weapon.equipment
-    # return render_template('hero_choosing.html', result=result)
     header = 'Выбор героя'
     equipment = Equipment()
     weapons = equipment.get_weapons_names()
     armors = equipment.get_armors_names()
     classes = unit_classes
     return render_template('hero_choosing.html',
-                           result={'header': header, "weapons": weapons, "armors": armors, "classes": classes})
+                           result={'header': header,
+                                   "weapons": weapons,
+                                   "armors": armors,
+                                   "classes": classes})
 
 
 @app.route("/choose-enemy/", methods=['post', 'get'])
@@ -80,7 +86,21 @@ def choose_enemy():
     # TODO кнопка выбор соперников. 2 метода GET и POST
     # TODO также на GET отрисовываем форму.
     # TODO а на POST отправляем форму и делаем редирект на начало битвы
-    pass
+    heroes_name = request.form.get('name')
+    weapon = request.form.get("weapon")
+    armor = request.form.get("armor")
+    unit_class = request.form.get("unit_class")
+    print(heroes_name, weapon, armor, unit_class)
+    header = 'Выбор героя'
+    equipment = Equipment()
+    weapons = equipment.get_weapons_names()
+    armors = equipment.get_armors_names()
+    classes = unit_classes
+    return render_template('hero_choosing.html',
+                           result={'header': header,
+                                   "weapons": weapons,
+                                   "armors": armors,
+                                   "classes": classes})
 
 
 if __name__ == "__main__":

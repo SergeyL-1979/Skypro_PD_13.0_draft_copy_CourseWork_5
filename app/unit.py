@@ -38,38 +38,44 @@ class BaseUnit(ABC):
 
     def equip_weapon(self, weapon: Weapon):
         # присваиваем нашему герою новое оружие
-        return f"Игрок {self.name} экипирован оружием {weapon.name}"
+        self.weapon = weapon
+        return f"Игрок {self.name} экипирован оружием {self.weapon.name}"
 
     def equip_armor(self, armor: Armor):
-        # одеваем новую броню
-        return f"Игрок {self.name} экипирован броней {armor.name}"
+        # присваиваем нашему и одеваем новую броню
+        self.armor = armor
+        return f"Игрок {self.name} экипирован броней {self.armor.name}"
 
     def _count_damage(self, target: BaseUnit) -> int:
-        damage = 0
-        #  TODO Эта функция должна содержать:
-        #   логику расчета урона игрока
+        #  === Эта функция должна содержать:
+        #  логику расчета урона игрока
+        # Формула для расчета значения БРОНЯ_ЦЕЛИ
+        weapon_damage = self.unit_class.attack * self.weapon.damage
+
         #   логику расчета брони цели
-        #   здесь же происходит уменьшение выносливости атакующего при ударе
-        #   и уменьшение выносливости защищающегося при использовании брони
-        #   если у защищающегося нехватает выносливости - его броня игнорируется
-        #   после всех расчетов цель получает урон - target.get_damage(damage)
-        #   и возвращаем предполагаемый урон для последующего вывода пользователю в текстовом виде
+        # armor_goals = target.armor.defence * target.unit_class.armor
 
-        target.get_damage(damage)
-        return damage
+        if target.stamina >= target.armor.stamina_per_turn * target.unit_class.stamina:
+            weapon_damage -= target.armor.defence
+            target.stamina -= target.armor.stamina_per_turn * target.unit_class.stamina
 
-    def get_damage(self, damage: int) -> Optional[int]:
+        target.get_damage(weapon_damage)
+        return weapon_damage
+
+    def get_damage(self, damage: int) -> Optional[float]:
         # TODO получение урона целью присваиваем новое значение для аттрибута self.hp
-        # if self == 2:
-        # Рандомно от 0 до 5 добавляет хп.
-        self.hp -= self._count_damage(damage)
-        # Если здоровье игрока больше, то хп игрока будет равна 100.
-        if self.hp > 100:
-            self.hp = 100
-
-        # new_hp = damage - self.hp
-        print("Ваши хп %s", self.hp)
+        self.hp -= damage
         return self.hp
+        # # if self == 2:
+        # # Рандомно от 0 до 5 добавляет хп.
+        # self.hp -= self._count_damage(damage)
+        # # Если здоровье игрока больше, то хп игрока будет равна 100.
+        # if self.hp > 100:
+        #     self.hp = 100
+        #
+        # # new_hp = damage - self.hp
+        # print("Ваши хп %s", self.hp)
+        # return self.hp
 
     @abstractmethod
     def hit(self, target: BaseUnit) -> str:
@@ -100,9 +106,10 @@ class PlayerUnit(BaseUnit):
         а также возвращается результат в виде строки
         """
         # результат функции должен возвращать следующие строки:
-        if self._count_damage(target) >= self.stamina:
-            return f"{self.name} используя {self.weapon.name} пробивает {target.armor.name} соперника и наносит {damage} урона." \
-                   f"{self.name} используя {self.weapon.name} наносит удар, но {target.armor.name} cоперника его останавливает." \
+        damage = self._count_damage(target)
+        if damage >= self.stamina:
+            return f"{self.name} используя {self.weapon.name} пробивает {target.armor.name} соперника и \nнаносит {damage} урона.\n" \
+                   f"{self.name} используя {self.weapon.name} наносит удар, но {target.armor.name} \ncоперника его останавливает.\n" \
                    f"{self.name} попытался использовать {self.weapon.name}, но у него не хватило выносливости."
 
 
@@ -118,23 +125,34 @@ class EnemyUnit(BaseUnit):
         функция _count_damage(target
         """
         # TODO результат функции должен возвращать результат функции skill.use или же следующие строки:
-        return f"{self.name} используя {self.weapon.name} пробивает {target.armor.name} и наносит Вам {damage} урона." \
-               f"{self.name} используя {self.weapon.name} наносит удар, но Ваш(а) {target.armor.name} его останавливает." \
+        damage = self._count_damage(target)
+        return f"{self.name} используя {self.weapon.name} \nпробивает {target.armor.name} и наносит Вам {damage} урона.\n" \
+               f"{self.name} используя {self.weapon.name} наносит удар, \nно Ваш(а) {target.armor.name} его останавливает.\n" \
                f"{self.name} попытался использовать {self.weapon.name}, но у него не хватило выносливости."
 
 
-un = UnitClass(name='Player', max_health=100, max_stamina=10, attack=4, stamina=10, armor=5, skill=FuryPunch())
+un = UnitClass(name='Player', max_health=100, max_stamina=10, attack=4, stamina=0.9, armor=5, skill=FuryPunch())
 player = PlayerUnit(name=un.name, unit_class=un)
 
-un_en = UnitClass(name='Enemy', max_health=100, max_stamina=8, attack=7, stamina=8, armor=2, skill=HardShot())
+un_en = UnitClass(name='Enemy', max_health=100, max_stamina=8, attack=7, stamina=0.9, armor=2, skill=HardShot())
 enemy = EnemyUnit(name=un_en.name, unit_class=un_en)
 ar = Equipment()
+print(player.equip_armor(armor=ar.get_armor(ar.get_armors_names()[1])))
+print(player.equip_weapon(weapon=ar.get_weapon(ar.get_weapons_names()[0])))
+print(enemy.equip_armor(armor=ar.get_armor(ar.get_armors_names()[2])))
+print(enemy.equip_weapon(weapon=ar.get_weapon(ar.get_weapons_names()[1])))
 # print(player.use_skill(player))
-# print(player.hit(player))
+print(player.hit(enemy))
+print(enemy.hit(player))
+
 # print(player.health_points)
 # print(player.stamina_points)
-# print(player.equip_armor(armor=ar.get_weapons_names()))
 
+
+# print(player.get_damage(10))
+# print(player.get_damage(10))
+# print(player.get_damage(10))
+# print(player.get_damage(10))
 
 # print(enemy.use_skill(enemy))
 # print(enemy.hit(enemy))
