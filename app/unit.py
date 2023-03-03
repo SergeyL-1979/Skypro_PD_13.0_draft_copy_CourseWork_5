@@ -6,7 +6,7 @@ from skills import Skill
 from random import randint
 from typing import Optional
 
-class UnitDied(BaseException):
+class UnitDied(Exception):
     pass
 class BaseUnit(ABC):
     """
@@ -64,10 +64,12 @@ class BaseUnit(ABC):
         weapon_damage = self.unit_class.attack * self.weapon.damage
 
         #   логику расчета брони цели
-        armor_goals = target.armor.defence * target.unit_class.stamina
+        # armor_goals = target.armor.defence * target.unit_class.stamina
+        armor_goals = target.armor.defence * target.unit_class.armor
 
         if target.stamina >= target.armor.stamina_per_turn * target.unit_class.stamina:
             weapon_damage -= target.armor.defence
+            armor_goals -= target.armor.defence
             self.stamina -= target.armor.stamina_per_turn * target.unit_class.stamina
 
         target.get_damage(weapon_damage)
@@ -75,8 +77,11 @@ class BaseUnit(ABC):
 
     def get_damage(self, damage: int) -> Optional[float]:
         # получение урона целью присваиваем новое значение для аттрибута self.hp
-        self.hp -= damage
-        return self.hp
+        self.hp -= (damage - self.unit_class.stamina)
+        if self.hp <= 0:
+            raise UnitDied(f'Трагически погиб в неравном бою {self.name}')
+        return True
+        # return self.hp
 
     @abstractmethod
     def hit(self, target: BaseUnit) -> str:
@@ -93,6 +98,10 @@ class BaseUnit(ABC):
         Если же умение не использовано тогда выполняем функцию
         self.unit_class.skill.use(user=self, target=target)
         и уже эта функция вернем нам строку, которая характеризует выполнение умения
+
+        Дам подсказку:
+        У Skill есть метод _is_stamina_enough на проверку
+        А также у BaseUnit есть параметр _is_skill_used
         """
         return self.unit_class.skill.use(user=self, target=target)
 
@@ -134,11 +143,11 @@ class EnemyUnit(BaseUnit):
 
 
 # un = UnitClass(name='Player', max_health=100, max_stamina=20, attack=4, stamina=0.9, armor=2, skill=FuryPunch())
-un = UnitClass(name="Воин", max_health=10, max_stamina=20, attack=1, stamina=0.9, armor=2, skill=FuryPunch())
+un = UnitClass(name="Воин", max_health=100, max_stamina=20, attack=3, stamina=0.9, armor=2, skill=FuryPunch())
 player = PlayerUnit(name=un.name, unit_class=un)
 
 # un_en = UnitClass(name='Enemy', max_health=100, max_stamina=8, attack=7, stamina=0.9, armor=2, skill=HardShot())
-un_en = UnitClass(name="Вор", max_health=6,  max_stamina=15, attack=2, stamina=0.9, armor=0.7, skill=HardShot())
+un_en = UnitClass(name="Вор", max_health=70,  max_stamina=15, attack=2, stamina=0.9, armor=0.7, skill=HardShot())
 enemy = EnemyUnit(name=un_en.name, unit_class=un_en)
 equipment = Equipment()
 player.equip_armor(armor=equipment.get_armor(equipment.get_armors_names()[1]))
@@ -146,46 +155,19 @@ player.equip_weapon(weapon=equipment.get_weapon(equipment.get_weapons_names()[1]
 enemy.equip_armor(armor=equipment.get_armor(equipment.get_armors_names()[1]))
 enemy.equip_weapon(weapon=equipment.get_weapon(equipment.get_weapons_names()[0]))
 
-print(player.stamina, player.name, 'до удара')
-print(player.hit(enemy))
-print(player.stamina, player.name, 'после удара')
-print('*' * 30)
-print(enemy.stamina, enemy.name, 'до удара')
-print(enemy.hit(player))
-print(enemy.stamina, enemy.name, 'после удара')
-print('*' * 30)
-print(player.health_points)
-print(player.stamina_points)
-print(enemy.health_points)
-print(enemy.stamina_points)
-print('----' * 30)
-player.hit(enemy)
-enemy.hit(player)
-player.hit(enemy)
-enemy.hit(player)
-player.hit(enemy)
-enemy.hit(player)
-player.hit(enemy)
-enemy.hit(player)
-player.hit(enemy)
-enemy.hit(player)
-player.hit(enemy)
-enemy.hit(player)
-player.hit(enemy)
-enemy.hit(player)
-player.hit(enemy)
-enemy.hit(player)
-player.hit(enemy)
-enemy.hit(player)
-player.hit(enemy)
-enemy.hit(player)
+try:
+    while all((player.health_points, enemy.health_points)):
+        print(enemy.hit(player))
+        print(player.hit(enemy))
+except UnitDied as e:
+    print(e.args[0])
 
 
 print('*' * 30)
-print(player.health_points)
-print(player.stamina_points)
-print(enemy.health_points)
-print(enemy.stamina_points)
+# print(player.health_points)
+# print(player.stamina_points)
+# print(enemy.health_points)
+# print(enemy.stamina_points)
 print(player.stamina, player.name, 'после удара')
 print(enemy.stamina, enemy.name, 'после удара')
 # print(player.get_damage(10))
