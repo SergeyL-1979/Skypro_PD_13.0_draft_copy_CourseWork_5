@@ -6,8 +6,11 @@ from skills import Skill
 from random import randint
 from typing import Optional
 
+
 class UnitDied(Exception):
     pass
+
+
 class BaseUnit(ABC):
     """
     Базовый класс юнита
@@ -77,7 +80,7 @@ class BaseUnit(ABC):
 
     def get_damage(self, damage: int) -> Optional[float]:
         # получение урона целью присваиваем новое значение для аттрибута self.hp
-        self.hp -= (damage - self.unit_class.stamina)
+        self.hp -= damage  # - self.unit_class.stamina)
         if self.hp <= 0:
             raise UnitDied(f'Трагически погиб в неравном бою {self.name}')
         return True
@@ -134,7 +137,7 @@ class EnemyUnit(BaseUnit):
         Если умение не применено, противник наносит простой удар, где также используется
         функция _count_damage(target)
         """
-        # TODO результат функции должен возвращать результат функции skill.use или же следующие строки:
+        # результат функции должен возвращать результат функции skill.use или же следующие строки:
         damage = self._count_damage(target)
         if damage <= self.stamina:
             return f"EnemyUnit {self.name} используя {self.weapon.name} пробивает {target.armor.name} и наносит Вам {damage} урона.\n" \
@@ -147,7 +150,7 @@ un = UnitClass(name="Воин", max_health=100, max_stamina=20, attack=3, stamin
 player = PlayerUnit(name=un.name, unit_class=un)
 
 # un_en = UnitClass(name='Enemy', max_health=100, max_stamina=8, attack=7, stamina=0.9, armor=2, skill=HardShot())
-un_en = UnitClass(name="Вор", max_health=70,  max_stamina=15, attack=2, stamina=0.9, armor=0.7, skill=HardShot())
+un_en = UnitClass(name="Вор", max_health=60,  max_stamina=15, attack=2, stamina=0.9, armor=0.7, skill=HardShot())
 enemy = EnemyUnit(name=un_en.name, unit_class=un_en)
 equipment = Equipment()
 player.equip_armor(armor=equipment.get_armor(equipment.get_armors_names()[1]))
