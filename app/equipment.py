@@ -25,7 +25,7 @@ class Weapon:
     @property
     def damage(self) -> float:
         damage_float = uniform(self.min_damage, self.max_damage)
-        return round(damage_float)
+        return round(damage_float, 2)
 
 
 @dataclass
