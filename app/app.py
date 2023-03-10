@@ -36,19 +36,26 @@ def hit():
     # обновляем экран боя (нанесение удара) (шаблон fight.html)
     # если игра идет - вызываем метод player.hit() экземпляра класса арены
     # если игра не идет - пропускаем срабатывание метода (простот рендерим шаблон с текущими данными)
-    try:
-        if arena.game_is_running:
-            result = arena.player_hit()
-        else:
-            result = arena.battle_result
+    # try:
+    if arena.game_is_running:
+        result = arena.player_hit()
         # return render_template('fight.html', heroes=heroes, result=result)
-    except UnitDied as e:
-        error_unit = e.args[0]
+    else:
         result = arena.battle_result
-        # return redirect(url_for('end_fight'))
-        return render_template('fight.html', heroes=heroes, result=result, error_unit=error_unit)
     return render_template('fight.html', heroes=heroes, result=result)
+    # except UnitDied as e:
+    #     error_unit = e.args[0]
+    #     result = arena.battle_result
+    #     return redirect(url_for('end_fight'))
+    #     # return render_template('fight.html', heroes=heroes, result=result, error_unit=error_unit)
+    # return render_template('fight.html', heroes=heroes, result=result)
 
+
+@app.errorhandler(UnitDied)
+def handle_bad_request(e):
+    result = arena.battle_result
+    error_unit = e.args[0]
+    return render_template('fight.html', heroes=heroes, result=result, error_unit=error_unit)
 
 @app.route("/fight/use-skill")
 def use_skill():

@@ -77,22 +77,28 @@ class BaseUnit(ABC):
         #   логику расчета брони цели
         # armor_goals = target.armor.defence * target.unit_class.stamina
         armor_goals = target.armor.defence * target.unit_class.armor
-
+        self.stamina -= self.weapon.stamina_per_hit
         if target.stamina >= target.armor.stamina_per_turn * target.unit_class.stamina:
             weapon_damage -= target.armor.defence
             armor_goals -= target.armor.defence
-            self.stamina -= target.armor.stamina_per_turn * target.unit_class.stamina
+            # self.stamina -= target.armor.stamina_per_turn * target.unit_class.stamina
 
         target.get_damage(weapon_damage)
         return weapon_damage
 
     def get_damage(self, damage: int) -> Optional[float]:
         # получение урона целью присваиваем новое значение для аттрибута self.hp
-        # self.hp -= damage  # - self.unit_class.stamina)
-        if damage > 0:
+        self.hp -= damage  # - self.unit_class.stamina)
+        if self.hp < 0:
+            self.hp = 0
             raise UnitDied(f'Трагически погиб в неравном бою {self.name}')
         return True
-        # return self.hp
+
+        # if damage > 0:
+        #     self.hp -= damage
+        #     if self.hp < damage:
+        #         raise UnitDied(f'Трагически погиб в неравном бою {self.name}')
+        # return True
         # if damage > 0:
         #     self.hp -= damage
 
